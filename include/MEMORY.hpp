@@ -5,32 +5,30 @@
 
 using namespace std;
 
-#ifndef CPU_H
-#define CPU_H
+#ifndef MEMORY_H
+#define MEMORY_H
 
 
 
-class CPU {
+class MEMORY {
     private:
         string LABEL;
-        int FREQUENCY;
-        int CORES;
-        string PROGRAM;
-        int CurrentlyActiveCores;
+        int SIZE;
+        int ACCESS;
+        string SOURCE;
     public:
         void load(const string& fileName);      
-        void PrintCPU();
-        CPU() :
+        void PrintMEMORY();
+        MEMORY() :
             LABEL(""),
-            FREQUENCY(0),
-            CORES(0),
-            CurrentlyActiveCores(0)
+            SIZE(0),
+            ACCESS(0)
             {};
 };
 
 
 
-void CPU::load(const string& fileName) {
+void MEMORY::load(const string& fileName) {
         std::ifstream file("data/"+fileName);
 
         if (!file) {
@@ -46,14 +44,14 @@ void CPU::load(const string& fileName) {
             if (cle == "LABEL") {                    
                 LABEL = value;
             }
-            else if (cle == "FREQUENCY") {
-                FREQUENCY = std::stoi(value); 
+            else if (cle == "SIZE") {
+                SIZE = std::stoi(value); 
             } 
-            else if (cle == "CORES") {
-                CORES = std::stoi(value); 
+            else if (cle == "ACCESS") {
+                ACCESS = std::stoi(value); 
             }
-            else if (cle == "PROGRAM"){
-                PROGRAM = value;
+            else if (cle == "SOURCE"){
+                SOURCE = value;
             }
         }
         file.close();
@@ -61,11 +59,11 @@ void CPU::load(const string& fileName) {
 
 
 
-void CPU::PrintCPU(){
+void MEMORY::PrintMEMORY(){
     cout << "LABEL: " << LABEL << endl;
-    cout << "CORES: " << CORES << endl;
-    cout << "FREQUENCY: " << FREQUENCY << endl;
-    cout << "PROGRAM: " << PROGRAM << endl;
+    cout << "ACCESS: " << ACCESS << endl;
+    cout << "SIZE: " << SIZE << endl;
+    cout << "SOURCE: " << SOURCE << endl;
 }
 
 

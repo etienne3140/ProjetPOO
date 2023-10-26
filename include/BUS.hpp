@@ -5,32 +5,27 @@
 
 using namespace std;
 
-#ifndef CPU_H
-#define CPU_H
+#ifndef BUS_H
+#define BUS_H
 
-
-
-class CPU {
+class BUS {
     private:
         string LABEL;
-        int FREQUENCY;
-        int CORES;
-        string PROGRAM;
-        int CurrentlyActiveCores;
+        int WIDTH;
+        string SOURCE;
     public:
         void load(const string& fileName);      
-        void PrintCPU();
-        CPU() :
+        void PrintBUS();
+        BUS() :
             LABEL(""),
-            FREQUENCY(0),
-            CORES(0),
-            CurrentlyActiveCores(0)
+            WIDTH(0),
+            SOURCE("")
             {};
 };
 
 
 
-void CPU::load(const string& fileName) {
+void BUS::load(const string& fileName) {
         std::ifstream file("data/"+fileName);
 
         if (!file) {
@@ -46,14 +41,11 @@ void CPU::load(const string& fileName) {
             if (cle == "LABEL") {                    
                 LABEL = value;
             }
-            else if (cle == "FREQUENCY") {
-                FREQUENCY = std::stoi(value); 
+            else if (cle == "WIDTH") {
+                WIDTH = std::stoi(value); 
             } 
-            else if (cle == "CORES") {
-                CORES = std::stoi(value); 
-            }
-            else if (cle == "PROGRAM"){
-                PROGRAM = value;
+            else if (cle == "SOURCE") {
+                SOURCE = value; 
             }
         }
         file.close();
@@ -61,12 +53,13 @@ void CPU::load(const string& fileName) {
 
 
 
-void CPU::PrintCPU(){
+
+void BUS::PrintBUS(){
     cout << "LABEL: " << LABEL << endl;
-    cout << "CORES: " << CORES << endl;
-    cout << "FREQUENCY: " << FREQUENCY << endl;
-    cout << "PROGRAM: " << PROGRAM << endl;
+    cout << "SOURCE: " << SOURCE << endl;
+    cout << "WIDTH: " << WIDTH << endl;
 }
+
 
 
 #endif
