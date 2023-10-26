@@ -2,7 +2,7 @@
 CXX = g++
 
 # Options de compilation
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -I/include/
 
 # Répertoires des fichiers source et d'en-tête
 SRC_DIR = src

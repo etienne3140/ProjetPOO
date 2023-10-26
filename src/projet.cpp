@@ -1,6 +1,13 @@
 #include <iostream>
+#include "CPU.hpp"
+
 
 int main(){
-    std::cout << "Salut ça va !" << std::endl;
-    return 0;
+    CPU cpu1;
+    cpu1.load("cpu1.txt");
+    cpu1.PrintCPU();
+
+
 }
+
+
