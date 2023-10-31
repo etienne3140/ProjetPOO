@@ -15,9 +15,9 @@ class CPU {
         string LABEL;
         int FREQUENCY;
         int CORES;
-        string PROGRAM;
         int CurrentlyActiveCores;
     public:
+        string PROGRAM;
         void load(const string& fileName);      
         void PrintCPU();
         CPU() :
@@ -31,26 +31,26 @@ class CPU {
 
 
 void CPU::load(const string& fileName) {
-        std::ifstream file("data/"+fileName);
+        ifstream file("data/"+fileName);
 
         if (!file) {
-            std::cerr << "Impossible d'ouvrir le file " << fileName << std::endl;
+            cerr << "Impossible d'ouvrir le file " << fileName << endl;
             return;
         }
 
-        std::string line;
-        while (std::getline(file, line)) {
+        string line;
+        while (getline(file, line)) {
             size_t pos = line.find(':');
-            std::string cle = line.substr(0, pos);
-            std::string value = line.substr(pos + 2); 
+            string cle = line.substr(0, pos);
+            string value = line.substr(pos + 2); 
             if (cle == "LABEL") {                    
                 LABEL = value;
             }
             else if (cle == "FREQUENCY") {
-                FREQUENCY = std::stoi(value); 
+                FREQUENCY = stoi(value); 
             } 
             else if (cle == "CORES") {
-                CORES = std::stoi(value); 
+                CORES = stoi(value); 
             }
             else if (cle == "PROGRAM"){
                 PROGRAM = value;
