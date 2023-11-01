@@ -21,8 +21,9 @@ void computing(){
 }
 
 int main(){
-    computing();
-    computing();
+    CPU cpu1;
+    cpu1.load("cpu1.txt");
+    cpu1.simulate();
 }
 
 

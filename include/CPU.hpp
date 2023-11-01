@@ -20,6 +20,7 @@ class REGISTER {
         queue<double> fifo;
         void AddResult(double result);
         double ReturnResult();
+        void PrintRegister();
         REGISTER() :
             value(0)
             {};
@@ -38,20 +39,30 @@ double REGISTER::ReturnResult(){
     return 0;
 }
 
+void REGISTER::PrintRegister(){
+    queue<double> copy_fifo = fifo;
+     while (!copy_fifo.empty()) {
+        cout << copy_fifo.front() << " ";
+        copy_fifo.pop();
+    }
+    cout << endl;
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~Création du programme~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class PROGRAMME {
-    private :
-        ifstream file;
     public :
+        string FileName;
         string program;
+        int ActualLine;
         void load();
         double compute();
         PROGRAMME() :
+            ActualLine(0),
             program(""),
-            file("data/"+program)
+            FileName("data/"+program)
             {};
 };
 
@@ -61,26 +72,50 @@ void PROGRAMME::load(){
 }
 
 double PROGRAMME::compute(){
+    ifstream file(FileName);
     if (!file) {
+        cout << program << endl;
         cerr << "Impossible d'ouvrir le fichier " << program << endl;
         return 0;
     }
     string ope, nb1, nb2;
-    file >> ope >> nb1 >> nb2;
+    string line;
+    int i = 0;
+    while(getline(file, line)){
+        if (i == ActualLine){
+            istringstream operators(line);
+            operators >> ope >> nb1 >> nb2;
+            break;
+        }
+        i++;
+
+    }
+    ActualLine++;
+    double a;
     if (ope == "NOP"){
-        return 0;
+        a = 0;
+        cout << "NOP " << a << endl;
+        return a;
     }
     else if (ope == "ADD"){
-        return stod(nb1)+stod(nb2);
+        a = stod(nb1)+stod(nb2);
+        cout << "ADD " << a << endl;
+        return a;
     }
     else if(ope == "SUB"){
-        return stod(nb1)-stod(nb2);
+        a = stod(nb1)-stod(nb2);
+        cout << "SUB " << a << endl;
+        return a;
     }
     else if(ope == "MUL"){
-        return stod(nb1)*stod(nb2);
+        a = stod(nb1)*stod(nb2);
+        cout << "MUL " << a << endl;
+        return a;
     }
     else if (ope == "DIV"){
-        return stod(nb1)/stod(nb2);
+        a = stod(nb1)/stod(nb2);
+        cout << "DIV " << a << endl;
+        return a;
     }
 }
 
@@ -96,9 +131,12 @@ class CPU {
         int CORES;
         string PROGRAM;
         int CurrentlyActiveCores;
+        REGISTER registre;
+        PROGRAMME programme;
     public:
         void load(const string& fileName);      
         void PrintCPU();
+        void simulate();
         CPU() :
             LABEL(""),
             FREQUENCY(0),
@@ -109,12 +147,11 @@ class CPU {
 
 
 
-void CPU::load(const string& fileName) {
-    PROGRAMME program;
-    program.load();
+void CPU::load(const string& fileName){
+    programme.load();
     ifstream file("data/"+fileName);
     if (!file) {
-        cerr << "Impossible d'ouvrir le file " << fileName << endl;
+        cerr << "Impossible d'ouvrir le fichier " << fileName << endl;
         return;
     }
     string line;
@@ -133,7 +170,7 @@ void CPU::load(const string& fileName) {
         }
         else if (cle == "PROGRAM"){
             PROGRAM = value;
-            program.program = value; //Ajout nom du fichier program dans la classe PROGRAM
+            programme.FileName = value; //Ajout nom du fichier program dans la classe PROGRAM
         }
     }
     file.close();
@@ -148,5 +185,21 @@ void CPU::PrintCPU(){
     cout << "PROGRAM: " << PROGRAM << endl;
 }
 
+void CPU::simulate(){
+    int cores = 0;
+    while (cores < CORES){
+        cout << "ok1" << endl;
+        int F = 0;
+        cores++;
+        while (F < FREQUENCY){
+            cout << "ok2" << endl;
+            F++;
+            //programme.compute();
+            registre.AddResult(programme.compute());
+        }
+        CurrentlyActiveCores++;
+    }
+    registre.PrintRegister();
+}
 
 #endif
