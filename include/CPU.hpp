@@ -194,7 +194,6 @@ void CPU::simulate(){
         while (F < FREQUENCY){
             cout << "ok2" << endl;
             F++;
-            //programme.compute();
             registre.AddResult(programme.compute());
         }
         CurrentlyActiveCores++;
