@@ -56,19 +56,33 @@ class PROGRAMME {
     public :
         string FileName;
         string program;
+        int NbLignes;
         int ActualLine;
         void load();
+        void count();
         double compute();
         PROGRAMME() :
+            NbLignes(0),
             ActualLine(0),
             program(""),
-            FileName("data/"+program)
+            FileName("")
             {};
 };
 
+
 void PROGRAMME::load(){
     REGISTER registre;
+}
 
+void PROGRAMME::count(){
+    //FileName = program;
+    cout << "fichier : " << FileName << endl;
+    ifstream File(FileName);
+    string line;
+    while(getline(File, line)){
+        NbLignes++;
+    }
+    File.close();
 }
 
 double PROGRAMME::compute(){
@@ -121,6 +135,16 @@ double PROGRAMME::compute(){
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~Création de la DataValue~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DataValue{
+    public:
+        bool ValidityFlag;
+        double Value;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~Création du CPU~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -134,6 +158,8 @@ class CPU {
         REGISTER registre;
         PROGRAMME programme;
     public:
+        DataValue Data;
+        void read();
         void load(const string& fileName);      
         void PrintCPU();
         void simulate();
@@ -145,9 +171,24 @@ class CPU {
             {};
 };
 
+void CPU::read(){
+    if (registre.fifo.empty()){
+        Data.ValidityFlag = 0;
+        Data.Value = 12;
+    }
+    Data.ValidityFlag = 1;
+    Data.Value = registre.fifo.front();
+    registre.fifo.pop();
+//Suite pour le test à enlever
+    cout << "Validity : " << Data.ValidityFlag << endl;
+    cout << Data.Value << endl;
+    registre.PrintRegister();
+}
 
 
 void CPU::load(const string& fileName){
+    Data.ValidityFlag = 0;
+    Data.Value = 12;
     programme.load();
     ifstream file("data/"+fileName);
     if (!file) {
@@ -173,6 +214,7 @@ void CPU::load(const string& fileName){
             programme.FileName = value; //Ajout nom du fichier program dans la classe PROGRAM
         }
     }
+    programme.count();
     file.close();
 }
 
@@ -186,15 +228,32 @@ void CPU::PrintCPU(){
 }
 
 void CPU::simulate(){
+    double test;
     int cores = 0;
+    cout << "coeur tot : " << CORES << endl;
     while (cores < CORES){
-        cout << "ok1" << endl;
         int F = 0;
         cores++;
         while (F < FREQUENCY){
-            cout << "ok2" << endl;
             F++;
-            registre.AddResult(programme.compute());
+            cout << "coeur : " << cores << endl;
+            cout << "Actuel : " << programme.ActualLine << endl;
+            cout << "Tot : " << programme.NbLignes << endl;
+            if (programme.ActualLine == programme.NbLignes-1){
+                
+                test = programme.compute();
+                cout << "test : " << test << endl;
+                if (abs(test) > 0.00000000000000001){
+                    registre.AddResult(test);
+                }
+                programme.ActualLine = 0;
+                break;
+            }
+            test = programme.compute();
+            if (abs(test) > 0.00000000000000001){
+                registre.AddResult(test);
+            }
+            
         }
         CurrentlyActiveCores++;
     }

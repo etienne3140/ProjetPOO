@@ -1,5 +1,5 @@
 TYPE: CPU
 LABEL: Main processing unit
-CORES: 4
-FREQUENCY: 5
+CORES: 2
+FREQUENCY: 3
 PROGRAM: data/program.txt
