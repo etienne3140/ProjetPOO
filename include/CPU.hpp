@@ -15,15 +15,15 @@ using namespace std;
 
 class REGISTER {
     private :
-        double value;
+        //double value;
     public :
         queue<double> fifo;
         void AddResult(double result);
         double ReturnResult();
         void PrintRegister();
-        REGISTER() :
-            value(0)
-            {};
+        //REGISTER() :
+            //value(0)
+        //    {};
 };
 
 void REGISTER::AddResult(double result){
@@ -108,27 +108,22 @@ double PROGRAMME::compute(){
     double a;
     if (ope == "NOP"){
         a = 0;
-        cout << "NOP " << a << endl;
         return a;
     }
     else if (ope == "ADD"){
         a = stod(nb1)+stod(nb2);
-        cout << "ADD " << a << endl;
         return a;
     }
     else if(ope == "SUB"){
         a = stod(nb1)-stod(nb2);
-        cout << "SUB " << a << endl;
         return a;
     }
     else if(ope == "MUL"){
         a = stod(nb1)*stod(nb2);
-        cout << "MUL " << a << endl;
         return a;
     }
     else if (ope == "DIV"){
         a = stod(nb1)/stod(nb2);
-        cout << "DIV " << a << endl;
         return a;
     }
 }
@@ -142,7 +137,9 @@ class DataValue{
     public:
         bool ValidityFlag;
         double Value;
-};
+    DataValue(): ValidityFlag(0), Value(0.0){};
+    DataValue(bool val, double v): ValidityFlag(val), Value(v){};
+    };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~Création du CPU~~~~~~~~~~~~~
@@ -155,10 +152,10 @@ class CPU {
         int CORES;
         string PROGRAM;
         int CurrentlyActiveCores;
-        REGISTER registre;
         PROGRAMME programme;
     public:
         DataValue Data;
+        REGISTER registre;
         void read();
         void load(const string& fileName);      
         void PrintCPU();
@@ -172,10 +169,11 @@ class CPU {
 };
 
 void CPU::read(){
+    /*
     if (registre.fifo.empty()){
         Data.ValidityFlag = 0;
         Data.Value = 12;
-    }
+    }*/
     Data.ValidityFlag = 1;
     Data.Value = registre.fifo.front();
     registre.fifo.pop();
@@ -187,8 +185,6 @@ void CPU::read(){
 
 
 void CPU::load(const string& fileName){
-    Data.ValidityFlag = 0;
-    Data.Value = 12;
     programme.load();
     ifstream file("data/"+fileName);
     if (!file) {
@@ -230,19 +226,13 @@ void CPU::PrintCPU(){
 void CPU::simulate(){
     double test;
     int cores = 0;
-    cout << "coeur tot : " << CORES << endl;
     while (cores < CORES){
         int F = 0;
         cores++;
         while (F < FREQUENCY){
             F++;
-            cout << "coeur : " << cores << endl;
-            cout << "Actuel : " << programme.ActualLine << endl;
-            cout << "Tot : " << programme.NbLignes << endl;
             if (programme.ActualLine == programme.NbLignes-1){
-                
                 test = programme.compute();
-                cout << "test : " << test << endl;
                 if (abs(test) > 0.00000000000000001){
                     registre.AddResult(test);
                 }
