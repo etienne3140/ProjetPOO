@@ -14,14 +14,16 @@ using namespace std;
 
 class DISPLAY {
     private:
-        int REFRESH;
         int RefAct;
         string SOURCE;
     public:
+        int REFRESH;
+        int Iter;
         void load(const string& fileName);      
         void simulate(MEMORY* memory);
         void PrintDISPLAY();
         DISPLAY() :
+            Iter(0),
             REFRESH(0),
             SOURCE(""),
             RefAct(0)
@@ -61,9 +63,11 @@ void DISPLAY::simulate(MEMORY* memory){
         while(!memory->CircularBuffer.empty()){
             result = memory->read();
             cout << "Result : " << result.Value << endl;
+            Iter++;
         }
     }
 }
+
 
 
 

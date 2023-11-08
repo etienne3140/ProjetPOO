@@ -45,7 +45,6 @@ void REGISTER::PrintRegister(){
         cout << copy_fifo.front() << " ";
         copy_fifo.pop();
     }
-    cout << endl;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,7 +75,6 @@ void PROGRAMME::load(){
 
 void PROGRAMME::count(){
     //FileName = program;
-    cout << "fichier : " << FileName << endl;
     ifstream File(FileName);
     string line;
     while(getline(File, line)){
@@ -88,7 +86,6 @@ void PROGRAMME::count(){
 double PROGRAMME::compute(){
     ifstream file(FileName);
     if (!file) {
-        cout << program << endl;
         cerr << "Impossible d'ouvrir le fichier " << program << endl;
         return 0;
     }
@@ -137,8 +134,8 @@ class DataValue{
     public:
         bool ValidityFlag;
         double Value;
-    DataValue(): ValidityFlag(0), Value(0.0){};
-    DataValue(bool val, double v): ValidityFlag(val), Value(v){};
+        DataValue(): ValidityFlag(0), Value(0.0){};
+        DataValue(bool val, double v): ValidityFlag(val), Value(v){};
     };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,6 +153,7 @@ class CPU {
     public:
         DataValue Data;
         REGISTER registre;
+        int iteration;
         void read();
         void load(const string& fileName);      
         void PrintCPU();
@@ -164,28 +162,25 @@ class CPU {
             LABEL(""),
             FREQUENCY(0),
             CORES(0),
-            CurrentlyActiveCores(0)
+            CurrentlyActiveCores(0),
+            iteration(0)
             {};
-};
+    };
 
 void CPU::read(){
-    /*
     if (registre.fifo.empty()){
         Data.ValidityFlag = 0;
         Data.Value = 12;
-    }*/
+    }
     Data.ValidityFlag = 1;
     Data.Value = registre.fifo.front();
     registre.fifo.pop();
-//Suite pour le test à enlever
-    cout << "Validity : " << Data.ValidityFlag << endl;
-    cout << Data.Value << endl;
-    registre.PrintRegister();
 }
 
 
 void CPU::load(const string& fileName){
     programme.load();
+    iteration = FREQUENCY*CORES;
     ifstream file("data/"+fileName);
     if (!file) {
         cerr << "Impossible d'ouvrir le fichier " << fileName << endl;

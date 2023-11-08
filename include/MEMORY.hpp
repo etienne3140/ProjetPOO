@@ -16,11 +16,11 @@ class MEMORY {
     private:
         string LABEL;
         int SIZE;
-        int ACCESS;
         string SOURCE;
         int SizeBuffer;
         int AccessTime;
     public:
+        int ACCESS;
         queue<DataValue> CircularBuffer;
         void load(const string& fileName);    
         void simulate(BUS* bus);  
@@ -80,14 +80,12 @@ void MEMORY::simulate(BUS *bus){
                 break;
             }
             result = bus->read();
-            cout << result.ValidityFlag << endl;
-            cout << result.Value << endl;
+            cout << "cool" << endl;
+            bus->PrintBusElements();
             if (!result.ValidityFlag){
                 break;
             }
-            //result = Data.Value;
             CircularBuffer.push(result);
-            cout << "empty" << CircularBuffer.empty() << endl;
         }
     }
 }
@@ -97,8 +95,6 @@ DataValue MEMORY::read(){
         SizeBuffer--;
         DataValue result = CircularBuffer.front();
         CircularBuffer.pop();
-        cout << "Resultat lu : " << result.ValidityFlag << endl;
-        cout << "Resultat lu value : " << result.Value << endl;
         return result;
     }
 }
