@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "CPU.hpp"
+#include "BUS.hpp"
 
 using namespace std;
 
@@ -16,13 +18,21 @@ class MEMORY {
         int SIZE;
         int ACCESS;
         string SOURCE;
+        int SizeBuffer;
+        int AccessTime;
     public:
-        void load(const string& fileName);      
+        queue<DataValue> CircularBuffer;
+        void load(const string& fileName);    
+        void simulate(BUS* bus);  
+        DataValue read();
+        void PrintMemoryElements();
         void PrintMEMORY();
         MEMORY() :
             LABEL(""),
             SIZE(0),
-            ACCESS(0)
+            ACCESS(0),
+            SizeBuffer(0),
+            AccessTime(0)
             {};
 };
 
@@ -57,6 +67,52 @@ void MEMORY::load(const string& fileName) {
         file.close();
 }
 
+void MEMORY::simulate(BUS *bus){
+    int k;
+    DataValue result;
+    AccessTime++;
+    cout << "A : " << AccessTime << endl;
+    if (AccessTime == ACCESS){
+        AccessTime = 0;
+        while(!bus->CircularFifo.empty()){
+            if (SizeBuffer >= SIZE){
+                cout << "Le bus est plein" << endl;
+                break;
+            }
+            result = bus->read();
+            cout << result.ValidityFlag << endl;
+            cout << result.Value << endl;
+            if (!result.ValidityFlag){
+                break;
+            }
+            //result = Data.Value;
+            CircularBuffer.push(result);
+            cout << "empty" << CircularBuffer.empty() << endl;
+        }
+    }
+}
+
+DataValue MEMORY::read(){
+    if (!CircularBuffer.empty()) {
+        SizeBuffer--;
+        DataValue result = CircularBuffer.front();
+        CircularBuffer.pop();
+        cout << "Resultat lu : " << result.ValidityFlag << endl;
+        cout << "Resultat lu value : " << result.Value << endl;
+        return result;
+    }
+}
+
+void MEMORY::PrintMemoryElements(){
+    queue<DataValue> copy_fifo = CircularBuffer;
+    DataValue result;
+    while (!copy_fifo.empty()) {
+        result = copy_fifo.front();
+        cout << "Contenu de la mémoire : " << result.ValidityFlag << " " <<  result.Value << endl;
+        copy_fifo.pop();
+    }
+    cout << endl;
+}
 
 
 void MEMORY::PrintMEMORY(){

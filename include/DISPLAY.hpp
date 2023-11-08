@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "CPU.hpp"
+#include "MEMORY.hpp"
 
 using namespace std;
 
@@ -13,13 +15,16 @@ using namespace std;
 class DISPLAY {
     private:
         int REFRESH;
+        int RefAct;
         string SOURCE;
     public:
         void load(const string& fileName);      
+        void simulate(MEMORY* memory);
         void PrintDISPLAY();
         DISPLAY() :
             REFRESH(0),
-            SOURCE("")
+            SOURCE(""),
+            RefAct(0)
             {};
 };
 
@@ -46,6 +51,18 @@ void DISPLAY::load(const string& fileName) {
             }
         }
         file.close();
+}
+
+void DISPLAY::simulate(MEMORY* memory){
+    RefAct++;
+    DataValue result;
+    if (RefAct == REFRESH){
+        RefAct = 0;
+        while(!memory->CircularBuffer.empty()){
+            result = memory->read();
+            cout << "Result : " << result.Value << endl;
+        }
+    }
 }
 
 

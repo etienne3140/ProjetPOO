@@ -17,13 +17,12 @@ class BUS {
         string SOURCE;
         int SizeFifo;
     public:
-        queue<double> CircularFifo;
+        queue<DataValue> CircularFifo;
         int ReadTimes;
-        DataValue Data;
         CPU cpu;
         void load(const string& fileName);      
         void simulate(CPU *cpu);
-        double read();
+        DataValue read();
         void PrintBUS();
         void PrintBusElements();
         BUS() :
@@ -62,10 +61,9 @@ void BUS::load(const string& fileName) {
 }
 
 void BUS::simulate(CPU *cpu){
-    // connect cpu.data que tu es en train de lire....
-    
     int k;
-    double result;
+    //double result;
+    DataValue Data;
     for (k = 0; k < WIDTH; k++){
         
         if (SizeFifo >= WIDTH){
@@ -80,32 +78,31 @@ void BUS::simulate(CPU *cpu){
         if (!Data.ValidityFlag){
             break;
         }
-        result = Data.Value;
-        /*
-        result = cpu->registre.ReturnResult();
-        cout << "resultat : " << result << endl;
-        */
-        CircularFifo.push(result);
+        //result = Data.Value;
+        CircularFifo.push(Data);
         SizeFifo++;
         cout << "Taille fifo : " << SizeFifo << endl;
     }
 }
 
-double BUS::read(){
+DataValue BUS::read(){
     if (!CircularFifo.empty()) {
         SizeFifo--;
         ReadTimes++;
-        double result = CircularFifo.front();
+        DataValue result = CircularFifo.front();
         CircularFifo.pop();
-        cout << "Resultat lu : " << result << endl;
+        cout << "Resultat lu : " << result.ValidityFlag << endl;
+        cout << "Resultat lu value : " << result.Value << endl;
         return result;
     }
 }
 
 void BUS::PrintBusElements(){
-    queue<double> copy_fifo = CircularFifo;
+    queue<DataValue> copy_fifo = CircularFifo;
+    DataValue result;
     while (!copy_fifo.empty()) {
-        cout << copy_fifo.front() << " ";
+        result = copy_fifo.front();
+        cout << "Contenu du bus : " << result.ValidityFlag << result.Value << endl;
         copy_fifo.pop();
     }
     cout << endl;
