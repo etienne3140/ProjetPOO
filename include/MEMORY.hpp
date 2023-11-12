@@ -71,7 +71,6 @@ void MEMORY::simulate(BUS *bus){
     int k;
     DataValue result;
     AccessTime++;
-    cout << "A : " << AccessTime << endl;
     if (AccessTime == ACCESS){
         AccessTime = 0;
         while(!bus->CircularFifo.empty()){
@@ -80,8 +79,6 @@ void MEMORY::simulate(BUS *bus){
                 break;
             }
             result = bus->read();
-            cout << "cool" << endl;
-            bus->PrintBusElements();
             if (!result.ValidityFlag){
                 break;
             }
@@ -107,7 +104,7 @@ void MEMORY::PrintMemoryElements(){
         cout << "Contenu de la mémoire : " << result.ValidityFlag << " " <<  result.Value << endl;
         copy_fifo.pop();
     }
-    cout << endl;
+    //cout << endl;
 }
 
 

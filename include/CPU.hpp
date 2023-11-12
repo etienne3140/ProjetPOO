@@ -10,6 +10,19 @@ using namespace std;
 #define CPU_H
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~Création de la DataValue~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DataValue{
+    public:
+        bool ValidityFlag;
+        double Value;
+        DataValue(): ValidityFlag(0), Value(0.0){};
+        DataValue(bool val, double v): ValidityFlag(val), Value(v){};
+    };
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~Création du registre~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -17,32 +30,36 @@ class REGISTER {
     private :
         //double value;
     public :
-        queue<double> fifo;
-        void AddResult(double result);
-        double ReturnResult();
+        queue<DataValue> fifo;
+        void AddResult(DataValue result);
+        DataValue ReturnResult();
         void PrintRegister();
         //REGISTER() :
             //value(0)
         //    {};
 };
 
-void REGISTER::AddResult(double result){
+void REGISTER::AddResult(DataValue result){
     fifo.push(result);
 }
 
-double REGISTER::ReturnResult(){
+DataValue REGISTER::ReturnResult(){
     if (!fifo.empty()) {
-        double result = fifo.front();
+        DataValue result = fifo.front();
         fifo.pop();
         return result;
     }
-    return 0;
+    DataValue empty;
+    empty.ValidityFlag = 0;
+    empty.Value = 12;
+    return empty;
 }
 
 void REGISTER::PrintRegister(){
-    queue<double> copy_fifo = fifo;
+    queue<DataValue> copy_fifo = fifo;
      while (!copy_fifo.empty()) {
-        cout << copy_fifo.front() << " ";
+        cout << copy_fifo.front().ValidityFlag << endl;
+        cout << copy_fifo.front().Value << endl;
         copy_fifo.pop();
     }
 }
@@ -74,7 +91,6 @@ void PROGRAMME::load(){
 }
 
 void PROGRAMME::count(){
-    //FileName = program;
     ifstream File(FileName);
     string line;
     while(getline(File, line)){
@@ -126,17 +142,6 @@ double PROGRAMME::compute(){
 }
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~Création de la DataValue~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class DataValue{
-    public:
-        bool ValidityFlag;
-        double Value;
-        DataValue(): ValidityFlag(0), Value(0.0){};
-        DataValue(bool val, double v): ValidityFlag(val), Value(v){};
-    };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~Création du CPU~~~~~~~~~~~~~
@@ -172,15 +177,13 @@ void CPU::read(){
         Data.ValidityFlag = 0;
         Data.Value = 12;
     }
-    Data.ValidityFlag = 1;
-    Data.Value = registre.fifo.front();
+    Data = registre.fifo.front();
     registre.fifo.pop();
 }
 
 
 void CPU::load(const string& fileName){
     programme.load();
-    iteration = FREQUENCY*CORES;
     ifstream file("data/"+fileName);
     if (!file) {
         cerr << "Impossible d'ouvrir le fichier " << fileName << endl;
@@ -205,6 +208,7 @@ void CPU::load(const string& fileName){
             programme.FileName = value; //Ajout nom du fichier program dans la classe PROGRAM
         }
     }
+    iteration = FREQUENCY*CORES;
     programme.count();
     file.close();
 }
@@ -219,7 +223,7 @@ void CPU::PrintCPU(){
 }
 
 void CPU::simulate(){
-    double test;
+    DataValue test;
     int cores = 0;
     while (cores < CORES){
         int F = 0;
@@ -227,22 +231,19 @@ void CPU::simulate(){
         while (F < FREQUENCY){
             F++;
             if (programme.ActualLine == programme.NbLignes-1){
-                test = programme.compute();
-                if (abs(test) > 0.00000000000000001){
-                    registre.AddResult(test);
-                }
+                test.Value = programme.compute();
+                test.ValidityFlag = 1;
+                registre.AddResult(test);
                 programme.ActualLine = 0;
                 break;
             }
-            test = programme.compute();
-            if (abs(test) > 0.00000000000000001){
-                registre.AddResult(test);
-            }
-            
+            test.Value = programme.compute();
+            test.ValidityFlag = 1;
+            registre.AddResult(test);
         }
         CurrentlyActiveCores++;
     }
-    registre.PrintRegister();
+    //registre.PrintRegister();
 }
 
 #endif

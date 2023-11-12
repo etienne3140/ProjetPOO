@@ -66,21 +66,24 @@ void BUS::simulate(CPU *cpu){
     DataValue Data;
     for (k = 0; k < WIDTH; k++){
         if (SizeFifo >= WIDTH){
+            break;
+        }
+        
+        if (SizeFifo >= WIDTH){
             cout << "Le bus est plein" << endl;
             break;
         }
         cpu->read();
         Data.Value = (cpu->Data).Value;
         Data.ValidityFlag =(cpu->Data).ValidityFlag;
-        cout << Data.ValidityFlag << endl;
-        cout << Data.Value << endl;
+        //cout << Data.ValidityFlag << endl;
+        //cout << Data.Value << endl;
         if (!Data.ValidityFlag){
             break;
         }
-        //result = Data.Value;
         CircularFifo.push(Data);
         SizeFifo++;
-        cout << "Taille fifo : " << SizeFifo << endl;
+        //cout << "Taille fifo : " << SizeFifo << endl;
     }
 }
 
@@ -99,7 +102,7 @@ void BUS::PrintBusElements(){
     DataValue result;
     while (!copy_fifo.empty()) {
         result = copy_fifo.front();
-        cout << "Contenu du bus : " << result.ValidityFlag << " " << result.Value << endl;
+        //cout << "Contenu du bus : " << result.ValidityFlag << " " << result.Value << endl;
         copy_fifo.pop();
     }
     cout << endl;

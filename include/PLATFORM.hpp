@@ -46,22 +46,28 @@ void PLATFORM::simulate(){
     cpu.simulate();
     prgm.FileName = "data/program.txt";
     prgm.count();
-    int total = cpu.iteration;
-    cout << endl;
-    cout << "total : " << total << endl;
-    while (display.Iter < total){
-        bus.simulate(&cpu);
-        for (int i; i<memory.ACCESS-1; i++){
-            memory.simulate(&bus);
-            cout << "Empty : " << bus.CircularFifo.empty() << endl;
-            bus.PrintBusElements();
+    int total = cpu.iteration;      
+    int x = 0;
+    while (display.Iter < total || x < 25){
+        x++;
+        if (x > 25){
+            break;
         }
-        for (int j; j<display.REFRESH; j++){
+        if (display.Iter >= total){
+            break;
+        }
+        bus.simulate(&cpu);
+        for (int i = 0; i<memory.ACCESS; i++){
+            memory.simulate(&bus);
+        }
+        for (int j = 0; j<display.REFRESH; j++){
             display.simulate(&memory);
-            memory.PrintMemoryElements();
         }    
     }
 
 }
+
+//5 3.3 15.006 4.2 50 30.3 1500.06 4.02 5 3.3 15.006 4.2 50 30.3 1500.06 4.02 5 3.3 15.006 4.2
+
 
 #endif
